@@ -40,9 +40,8 @@
 }
 
 html{
-
     scroll-behavior:smooth;
-
+    scroll-padding-top:80px;
 }
 
 body{
@@ -1606,15 +1605,35 @@ footer p{
 
 @media(max-width:768px){
 
+.menu-btn{
+    display:block;
+}
+
 .nav-menu{
+
+    position:absolute;
+    top:80px;
+    left:0;
+
+    width:100%;
+
+    background:#fff;
+
+    border-top:1px solid var(--border);
 
     display:none;
 
+    flex-direction:column;
+
+    padding:25px;
+
+    gap:20px;
+
 }
 
-.menu-btn{
+.nav-menu.active{
 
-    display:block;
+    display:flex;
 
 }
 
@@ -1713,36 +1732,6 @@ section{
 .footer-links{
 
     gap:18px;
-
-}
-
-.nav-menu{
-
-    position:absolute;
-
-    top:80px;
-
-    left:0;
-
-    width:100%;
-
-    background:#fff;
-
-    border-top:1px solid var(--border);
-
-    display:none;
-
-    flex-direction:column;
-
-    padding:25px;
-
-    gap:20px;
-
-}
-
-.nav-menu.active{
-
-    display:flex;
 
 }
 

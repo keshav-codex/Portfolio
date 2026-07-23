@@ -8,9 +8,9 @@ const navMenu = document.querySelector(".nav-menu");
 menuBtn.addEventListener("click", () => {
 
     navMenu.classList.toggle("active");
+    menuBtn.classList.toggle("active");
 
 });
-
 
 
 /* ==========================================
@@ -19,14 +19,29 @@ menuBtn.addEventListener("click", () => {
 
 document.querySelectorAll(".nav-menu a").forEach(link => {
 
-    link.addEventListener("click", () => {
+    link.addEventListener("click", function (e) {
 
-        navMenu.classList.remove("active");
+        e.preventDefault();
+
+        const target = document.querySelector(this.getAttribute("href"));
+
+        if (target) {
+
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+        setTimeout(() => {
+            navMenu.classList.remove("active");
+            menuBtn.classList.remove("active");
+        }, 300);
 
     });
 
 });
-
 
 
 /* ==========================================
@@ -46,10 +61,11 @@ window.addEventListener("scroll", () => {
 
         const sectionHeight = section.clientHeight;
 
-        if (scrollY >= sectionTop) {
-
-            current = section.getAttribute("id");
-
+        if (
+            scrollY >= sectionTop &&
+            scrollY < sectionTop + section.clientHeight
+        ) {
+            current = section.id;
         }
 
     });
