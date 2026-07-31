@@ -1736,3 +1736,114 @@ section{
 }
 
 }
+
+/* ==========================================
+   VERY SMALL DEVICES
+========================================== */
+
+@media (max-width:380px){
+
+    .container{
+        width:94%;
+    }
+
+    .hero{
+        padding:100px 0 60px;
+    }
+
+    .hero h1{
+        font-size:1.9rem;
+    }
+
+    .hero h2{
+        font-size:1.05rem;
+    }
+
+    .hero-description{
+        font-size:.95rem;
+    }
+
+    .hero-image img{
+        width:220px;
+        height:220px;
+    }
+
+    .btn{
+        width:100%;
+    }
+
+    .project-links{
+        grid-template-columns:1fr;
+    }
+
+    .project-links a{
+        width:100%;
+    }
+
+    .featured-card{
+        padding:20px;
+    }
+
+    .contact-card{
+        padding:25px;
+    }
+
+    .info-card,
+    .about-card,
+    .repository-card,
+    .skill-card{
+        padding:24px;
+    }
+
+}
+
+
+/* ==========================================
+   EXTRA LARGE SCREENS
+========================================== */
+
+@media (min-width:1600px){
+
+    .container{
+        width:min(1450px,90%);
+    }
+
+    section{
+        padding:110px 0;
+    }
+
+    .hero-container{
+        gap:120px;
+    }
+
+    .hero h1{
+        font-size:4.4rem;
+    }
+
+    .hero h2{
+        font-size:1.8rem;
+    }
+
+    .hero-description{
+        max-width:700px;
+        font-size:1.15rem;
+    }
+
+    .hero-image img{
+        width:420px;
+        height:420px;
+    }
+
+    .projects-grid{
+        gap:40px;
+    }
+
+    .repository-grid{
+        gap:36px;
+    }
+
+    .highlight-grid{
+        gap:32px;
+    }
+
+}

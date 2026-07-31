@@ -1,45 +1,144 @@
 /* ==========================================
+   ELEMENTS
+========================================== */
+
+const header = document.querySelector(".header");
+
+const menuBtn = document.querySelector(".menu-btn");
+
+const navMenu = document.querySelector(".nav-menu");
+
+const navLinks = document.querySelectorAll(".nav-menu a");
+
+const sections = document.querySelectorAll("section");
+
+const skillsGrid = document.querySelector(".skills-grid");
+
+const nextSkillBtn = document.querySelector(".skill-next");
+
+const prevSkillBtn = document.querySelector(".skill-prev");
+
+
+/* ==========================================
    MOBILE MENU
 ========================================== */
 
-const menuBtn = document.querySelector(".menu-btn");
-const navMenu = document.querySelector(".nav-menu");
+if(menuBtn && navMenu){
 
-menuBtn.addEventListener("click", () => {
+    menuBtn.addEventListener("click",function(){
 
-    navMenu.classList.toggle("active");
-    menuBtn.classList.toggle("active");
+        navMenu.classList.toggle("active");
+
+        menuBtn.classList.toggle("active");
+
+        menuBtn.setAttribute(
+            "aria-expanded",
+            navMenu.classList.contains("active")
+        );
+
+    });
+
+}
+
+
+/* ==========================================
+   CLOSE MENU AFTER LINK CLICK
+========================================== */
+
+navLinks.forEach(function(link){
+
+    link.addEventListener("click",function(event){
+
+        event.preventDefault();
+
+        const target = document.querySelector(
+            this.getAttribute("href")
+        );
+
+        if(target){
+
+            target.scrollIntoView({
+
+                behavior:"smooth",
+
+                block:"start"
+
+            });
+
+        }
+
+        if(navMenu){
+
+            navMenu.classList.remove("active");
+
+        }
+
+        if(menuBtn){
+
+            menuBtn.classList.remove("active");
+
+            menuBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        }
+
+    });
 
 });
 
 
 /* ==========================================
-   CLOSE MENU AFTER CLICK
+   CLOSE MENU WHEN CLICKING OUTSIDE
 ========================================== */
 
-document.querySelectorAll(".nav-menu a").forEach(link => {
+document.addEventListener("click",function(event){
 
-    link.addEventListener("click", function (e) {
+    if(
+        navMenu &&
+        menuBtn &&
+        navMenu.classList.contains("active") &&
+        !navMenu.contains(event.target) &&
+        !menuBtn.contains(event.target)
+    ){
 
-        e.preventDefault();
+        navMenu.classList.remove("active");
 
-        const target = document.querySelector(this.getAttribute("href"));
+        menuBtn.classList.remove("active");
 
-        if (target) {
+        menuBtn.setAttribute(
+            "aria-expanded",
+            "false"
+        );
 
-            target.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+    }
 
-        }
+});
 
-        setTimeout(() => {
-            navMenu.classList.remove("active");
-            menuBtn.classList.remove("active");
-        }, 300);
 
-    });
+/* ==========================================
+   CLOSE MENU WITH ESC KEY
+========================================== */
+
+document.addEventListener("keydown",function(event){
+
+    if(
+        event.key === "Escape" &&
+        navMenu &&
+        navMenu.classList.contains("active")
+    ){
+
+        navMenu.classList.remove("active");
+
+        menuBtn.classList.remove("active");
+
+        menuBtn.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+    }
 
 });
 
@@ -48,33 +147,41 @@ document.querySelectorAll(".nav-menu a").forEach(link => {
    ACTIVE NAVIGATION
 ========================================== */
 
-const sections = document.querySelectorAll("section");
-const navLinks = document.querySelectorAll(".nav-menu a");
+function updateActiveSection(){
 
-window.addEventListener("scroll", () => {
+    let currentSection = "";
 
-    let current = "";
+    sections.forEach(function(section){
 
-    sections.forEach(section => {
+        const sectionTop =
+        section.offsetTop - 140;
 
-        const sectionTop = section.offsetTop - 120;
+        const sectionBottom =
+        sectionTop + section.offsetHeight;
 
-        const sectionHeight = section.clientHeight;
+        if(
 
-        if (
-            scrollY >= sectionTop &&
-            scrollY < sectionTop + section.clientHeight
-        ) {
-            current = section.id;
+            window.scrollY >= sectionTop &&
+            window.scrollY < sectionBottom
+
+        ){
+
+            currentSection = section.id;
+
         }
 
     });
 
-    navLinks.forEach(link => {
+    navLinks.forEach(function(link){
 
         link.classList.remove("active");
 
-        if (link.getAttribute("href") === "#" + current) {
+        if(
+
+            link.getAttribute("href") ===
+            "#" + currentSection
+
+        ){
 
             link.classList.add("active");
 
@@ -82,69 +189,129 @@ window.addEventListener("scroll", () => {
 
     });
 
-});
-
+}
 
 
 /* ==========================================
-   STICKY HEADER SHADOW
+   HEADER SHADOW
 ========================================== */
 
-const header = document.querySelector(".header");
+function updateHeader(){
 
-window.addEventListener("scroll", () => {
+    if(!header){
 
-    if (window.scrollY > 30) {
+        return;
 
-        header.style.boxShadow = "0 6px 20px rgba(0,0,0,.08)";
+    }
 
-    } else {
+    if(window.scrollY > 20){
+
+        header.style.boxShadow =
+        "0 6px 20px rgba(0,0,0,.08)";
+
+    }
+
+    else{
 
         header.style.boxShadow = "none";
 
     }
 
-});
+}
 
+
+/* ==========================================
+   WINDOW SCROLL
+========================================== */
+
+window.addEventListener("scroll",function(){
+
+    updateHeader();
+
+    updateActiveSection();
+
+});
 
 
 /* ==========================================
    IMAGE FALLBACK
 ========================================== */
 
-document.querySelectorAll("img").forEach(image => {
+document.querySelectorAll("img").forEach(function(image){
 
-    image.onerror = function () {
+    image.addEventListener("error",function(){
 
-        this.src = "images/image-not-available.png";
+        this.src =
+        "images/image-not-available.png";
 
-    };
+    });
 
 });
 
 
-const skillsGrid = document.querySelector(".skills-grid");
+/* ==========================================
+   SKILLS SLIDER
+========================================== */
 
-document.querySelector(".skill-next").onclick = () => {
+function scrollSkills(direction){
+
+    if(!skillsGrid){
+
+        return;
+
+    }
+
+    const scrollAmount =
+
+    Math.min(
+
+        skillsGrid.clientWidth * 0.8,
+
+        350
+
+    );
 
     skillsGrid.scrollBy({
 
-        left:300,
+        left:direction * scrollAmount,
 
         behavior:"smooth"
 
     });
 
-};
+}
 
-document.querySelector(".skill-prev").onclick = () => {
 
-    skillsGrid.scrollBy({
+if(nextSkillBtn){
 
-        left:-300,
+    nextSkillBtn.addEventListener("click",function(){
 
-        behavior:"smooth"
+        scrollSkills(1);
 
     });
 
-};
+}
+
+
+if(prevSkillBtn){
+
+    prevSkillBtn.addEventListener("click",function(){
+
+        scrollSkills(-1);
+
+    });
+
+}
+
+
+/* ==========================================
+   INITIAL LOAD
+========================================== */
+
+window.addEventListener("load",function(){
+
+    updateHeader();
+
+    updateActiveSection();
+
+});
