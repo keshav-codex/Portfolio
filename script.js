@@ -5,9 +5,10 @@ const menuBtn   = document.querySelector(".menu-btn");
 const navMenu   = document.querySelector(".nav-menu");
 const navLinks  = document.querySelectorAll(".nav-link");
 const sections  = document.querySelectorAll("main section, footer");
-const skillsGrid    = document.querySelector(".skills-grid");
-const nextSkillBtn  = document.querySelector(".skill-next");
-const prevSkillBtn  = document.querySelector(".skill-prev");
+const skillsGrid   = document.getElementById("skillsGrid");
+const skillPrevBtn = document.querySelector(".skill-prev");
+const skillNextBtn = document.querySelector(".skill-next");
+const skillsDots    = document.getElementById("skillsDots");
 
 /* ==========================================================
    MOBILE MENU
@@ -93,15 +94,55 @@ if ("IntersectionObserver" in window) {
 }
 
 /* ==========================================================
-   SKILLS SLIDER
+   SKILLS SLIDER — card-by-card nav + dot indicators
 ========================================================== */
-function scrollSkills(direction) {
-  if (!skillsGrid) return;
-  const amount = Math.min(skillsGrid.clientWidth * 0.8, 360);
-  skillsGrid.scrollBy({ left: direction * amount, behavior: "smooth" });
+if (skillsGrid) {
+  const cards = Array.from(skillsGrid.children);
+
+  // build dots
+  cards.forEach(function (_, i) {
+    const dot = document.createElement("button");
+    dot.setAttribute("aria-label", "Go to skill card " + (i + 1));
+    dot.addEventListener("click", function () { scrollToCard(i); });
+    skillsDots.appendChild(dot);
+  });
+  const dots = Array.from(skillsDots.children);
+
+  function currentIndex() {
+    const cardWidth = cards[0].getBoundingClientRect().width + 20; // + gap
+    return Math.round(skillsGrid.scrollLeft / cardWidth);
+  }
+
+  function scrollToCard(i) {
+    const cardWidth = cards[0].getBoundingClientRect().width + 20;
+    skillsGrid.scrollTo({ left: i * cardWidth, behavior: "smooth" });
+  }
+
+  function refreshSliderState() {
+    const idx = Math.max(0, Math.min(cards.length - 1, currentIndex()));
+    dots.forEach(function (d, i) { d.classList.toggle("active", i === idx); });
+
+    const maxScroll = skillsGrid.scrollWidth - skillsGrid.clientWidth - 4;
+    if (skillPrevBtn) skillPrevBtn.disabled = skillsGrid.scrollLeft <= 4;
+    if (skillNextBtn) skillNextBtn.disabled = skillsGrid.scrollLeft >= maxScroll;
+  }
+
+  if (skillPrevBtn) skillPrevBtn.addEventListener("click", function () {
+    scrollToCard(Math.max(0, currentIndex() - 1));
+  });
+  if (skillNextBtn) skillNextBtn.addEventListener("click", function () {
+    scrollToCard(Math.min(cards.length - 1, currentIndex() + 1));
+  });
+
+  let scrollTimer;
+  skillsGrid.addEventListener("scroll", function () {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(refreshSliderState, 80);
+  });
+  window.addEventListener("resize", refreshSliderState);
+  window.addEventListener("load", refreshSliderState);
+  refreshSliderState();
 }
-if (nextSkillBtn) nextSkillBtn.addEventListener("click", function () { scrollSkills(1); });
-if (prevSkillBtn) prevSkillBtn.addEventListener("click", function () { scrollSkills(-1); });
 
 /* ==========================================================
    IMAGE FALLBACK — generates an inline placeholder so a

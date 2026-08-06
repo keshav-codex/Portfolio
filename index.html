@@ -171,9 +171,7 @@
     </div>
 
     <div class="skills-slider">
-      <button class="skill-prev" aria-label="Previous skills"><i class="fas fa-angle-left"></i></button>
-
-      <div class="skills-grid">
+      <div class="skills-grid" id="skillsGrid">
         <div class="skill-card" data-reveal>
           <span class="skill-tag">/core</span>
           <i class="fa-solid fa-code"></i>
@@ -189,7 +187,7 @@
           <h3>Backend &amp; Architecture</h3>
           <div class="skill-list">
             <span>Django</span><span>PostgreSQL</span><span>REST APIs</span><span>DRF</span>
-            <span>OOP</span><span>DSA</span><span>System Design</span>
+            <span>OOP</span><span>DSA</span>
           </div>
         </div>
 
@@ -226,12 +224,16 @@
           <i class="fa-solid fa-graduation-cap"></i>
           <h3>Currently Learning</h3>
           <div class="skill-list">
-            <span>DRF Deep-Dive</span><span>NumPy</span><span>Pandas</span><span>Pandas</span><span>Matplotlib</span><span>Web Scraping</span>
+            <span>DRF Deep-Dive</span><span>NumPy</span><span>Pandas</span>
+            <span>Matplotlib</span><span>System Design</span><span>Web Scraping</span>
           </div>
         </div>
       </div>
 
-      <button class="skill-next" aria-label="Next skills"><i class="fas fa-angle-right"></i></button>
+      <button class="skill-nav skill-prev" aria-label="Previous skills"><i class="fas fa-angle-left"></i></button>
+      <button class="skill-nav skill-next" aria-label="Next skills"><i class="fas fa-angle-right"></i></button>
+
+      <div class="skills-dots" id="skillsDots"></div>
     </div>
   </div>
 </section>
