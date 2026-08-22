@@ -75,8 +75,6 @@ section{padding:100px 0;position:relative;}
 }
 .route-tag em{font-style:normal;color:var(--signal);font-weight:600;}
 
-/* Quiet eyebrow — used for every repeated section label so the
-   bold route-tag pill stays a one-time signature (hero + footer). */
 .eyebrow{
   display:inline-block;font-family:var(--font-mono);font-size:.78rem;font-weight:500;
   letter-spacing:.03em;color:var(--muted);margin-bottom:14px;
@@ -89,7 +87,6 @@ section{padding:100px 0;position:relative;}
 .section-title h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:700;margin-bottom:14px;}
 .section-title p{color:var(--muted);}
 
-/* Reveal-on-scroll */
 [data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
 [data-reveal].is-visible{opacity:1;transform:translateY(0);}
 
@@ -99,9 +96,15 @@ section{padding:100px 0;position:relative;}
 .btn{
   display:inline-flex;align-items:center;gap:9px;
   padding:13px 24px;border-radius:12px;font-size:.92rem;font-weight:600;
-  transition:.25s;
+  transition:.25s;position:relative;overflow:hidden;
 }
 .btn-solid{background:var(--indigo);color:#fff;box-shadow:0 10px 24px rgba(79,70,229,.28);}
+.btn-solid::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.35) 42%,transparent 60%);
+  transform:translateX(-120%);transition:transform .6s ease;
+}
+.btn-solid:hover::before{transform:translateX(120%);}
 .btn-solid:hover{background:var(--indigo-dark);transform:translateY(-2px);}
 .btn-ghost{border:1px solid var(--line);background:#fff;color:var(--ink);}
 .btn-ghost:hover{border-color:var(--indigo);color:var(--indigo);transform:translateY(-2px);}
@@ -153,7 +156,6 @@ section{padding:100px 0;position:relative;}
 .meta-row{display:flex;flex-wrap:wrap;gap:20px;font-size:.88rem;color:var(--muted);margin-bottom:26px;}
 .meta-row i{color:var(--indigo);margin-right:6px;}
 
-/* Response card visual */
 .profile-visual{position:relative;display:flex;justify-content:center;}
 .response-card{
   width:100%;max-width:360px;background:var(--ink);border-radius:20px;overflow:hidden;
@@ -259,7 +261,6 @@ section{padding:100px 0;position:relative;}
 }
 .skill-card:hover{transform:translateY(-8px);box-shadow:0 22px 40px rgba(15,23,42,.14);}
 
-/* header strip — reuses the .skill-tag element as a full-bleed terminal bar */
 .skill-tag{
   order:-2;display:flex;align-items:center;gap:6px;
   padding:13px 16px 13px 46px;position:relative;
@@ -272,7 +273,6 @@ section{padding:100px 0;position:relative;}
   box-shadow:14px 0 0 rgba(255,255,255,.28),28px 0 0 rgba(255,255,255,.14);
 }
 
-/* icon badge — floats over the header/body seam */
 .skill-card i{
   order:-1;
   width:50px;height:50px;display:flex;align-items:center;justify-content:center;
@@ -298,7 +298,6 @@ section{padding:100px 0;position:relative;}
 }
 .skill-list span:not(:last-child)::after{content:",";color:var(--muted);margin-left:6px;}
 
-/* per-card accent rotation for a colourful, non-monotone row */
 .skill-card:nth-child(6n+1){--accent:var(--indigo);}
 .skill-card:nth-child(6n+2){--accent:var(--signal);}
 .skill-card:nth-child(6n+3){--accent:var(--amber);}
@@ -311,13 +310,35 @@ section{padding:100px 0;position:relative;}
 ========================================================== */
 .highlights{background:var(--ink);color:#fff;}
 .highlights .section-title p{color:#93A0C2;}
+
+.highlight-tabs{
+  position:relative;display:flex;width:fit-content;gap:2px;
+  background:var(--ink-soft);border:1px solid var(--line-dark);border-radius:14px;
+  padding:6px;margin:0 auto 44px;
+}
+.tab-btn{
+  position:relative;z-index:2;display:flex;align-items:center;gap:9px;
+  padding:11px 22px;border-radius:10px;font-family:var(--font-mono);font-size:.85rem;
+  font-weight:600;color:#8A93B8;transition:color .3s;white-space:nowrap;
+}
+.tab-btn.active{color:#fff;}
+.tab-indicator{
+  position:absolute;top:6px;left:6px;height:calc(100% - 12px);border-radius:10px;
+  background:linear-gradient(120deg,var(--indigo),var(--violet));z-index:1;
+  transition:transform .4s cubic-bezier(.65,0,.35,1),width .4s cubic-bezier(.65,0,.35,1);
+}
+
+.highlight-panel{display:none;}
+.highlight-panel.active{display:block;animation:panelIn .5s ease;}
+@keyframes panelIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
 .highlight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
 .highlight-card{
   padding:34px 26px;text-align:center;background:var(--ink-soft);border:1px solid var(--line-dark);
   border-radius:var(--radius);transition:.3s;
 }
 .highlight-card:hover{transform:translateY(-6px);border-color:var(--signal);}
-.highlight-card h3{font-size:2.4rem;color:var(--signal);margin-bottom:8px;}
+.highlight-card h3{font-size:2.4rem;color:var(--signal);margin-bottom:8px;font-variant-numeric:tabular-nums;}
 .highlight-card p{color:#B7C0DE;font-size:.92rem;}
 .highlight-cta{text-align:center;margin-top:44px;}
 
@@ -326,34 +347,48 @@ section{padding:100px 0;position:relative;}
 ========================================================== */
 .projects{background:var(--paper);}
 
-/* Flagship card */
 .project-flagship{
   background:var(--white);border:1px solid var(--line);border-radius:24px;overflow:hidden;
   box-shadow:var(--shadow);margin-bottom:50px;
 }
-.flagship-top{position:relative;aspect-ratio:21/8;background:#DDE1F5;}
-.flagship-hero-img{width:100%;height:100%;object-fit:cover;}
+.flagship-top{position:relative;aspect-ratio:21/8;background:#DDE1F5;overflow:hidden;}
+.flagship-hero-img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
+.project-flagship:hover .flagship-hero-img{transform:scale(1.045);}
 .status-badge{
   position:absolute;top:18px;right:18px;display:inline-flex;align-items:center;gap:7px;
   font-family:var(--font-mono);font-size:.78rem;font-weight:600;padding:8px 14px;border-radius:30px;
 }
 .status-progress{background:var(--amber);color:#3B2600;}
+.status-complete{background:var(--signal);color:#04291F;}
 .flagship-body{padding:34px 36px 8px;}
 .flagship-body h3{font-size:1.6rem;margin-bottom:14px;}
 .flagship-body h3 small{display:block;font-family:var(--font-body);font-size:.9rem;font-weight:500;color:var(--muted);margin-top:6px;}
 .flagship-body p{color:var(--slate);margin-bottom:20px;max-width:820px;}
 .flagship-strip{padding:20px 0 30px;}
 
-/* Marquee (ping-pong) */
-.marquee-strip,.flagship-strip{overflow:hidden;}
+/* Marquee viewport — fixed height window with edge fade masks so any
+   number of images (even 15+) scrolls cleanly without overflow issues */
+.marquee-viewport{
+  position:relative;overflow:hidden;border-radius:12px;height:140px;
+}
+.marquee-viewport-sm{height:105px;}
+.marquee-viewport::before,.marquee-viewport::after{
+  content:"";position:absolute;top:0;bottom:0;width:56px;z-index:2;pointer-events:none;
+}
+.marquee-viewport::before{left:0;background:linear-gradient(90deg,var(--white),rgba(255,255,255,0));}
+.marquee-viewport::after{right:0;background:linear-gradient(270deg,var(--white),rgba(255,255,255,0));}
+.marquee-viewport.is-empty{display:none;}
+
 .marquee-track{
-  display:flex;gap:14px;width:max-content;padding:0 4px;
-  animation:marquee 14s ease-in-out infinite alternate;
+  display:flex;gap:14px;width:max-content;padding:0 4px;height:100%;
+  animation:marquee 14s linear infinite alternate;
+  will-change:transform;
 }
+.marquee-viewport:hover .marquee-track{animation-play-state:paused;}
 .marquee-track img{
-  width:150px;height:105px;object-fit:cover;border-radius:10px;border:1px solid var(--line);flex-shrink:0;
+  height:100%;width:auto;aspect-ratio:16/10;object-fit:cover;border-radius:10px;
+  border:1px solid var(--line);flex-shrink:0;
 }
-.flagship-strip .marquee-track img{width:220px;height:140px;}
 @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(var(--marquee-distance,-40%));}}
 
 .project-tags{display:flex;flex-wrap:wrap;gap:9px;}
@@ -375,12 +410,14 @@ section{padding:100px 0;position:relative;}
   display:flex;flex-direction:column;transition:.3s;
 }
 .project-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);}
-.project-top-img{aspect-ratio:16/9;background:#DDE1F5;}
+.project-top-img{aspect-ratio:16/9;background:#DDE1F5;overflow:hidden;}
+.project-top-img img{transition:transform .5s ease;}
+.project-card:hover .project-top-img img{transform:scale(1.07);}
 .project-content{padding:26px 26px 8px;display:flex;flex-direction:column;gap:6px;}
 .project-content small{color:var(--indigo);font-weight:600;font-size:.78rem;}
 .project-content h3{font-size:1.2rem;margin:4px 0 8px;}
 .project-content p{color:var(--muted);font-size:.92rem;margin-bottom:10px;}
-.project-content .marquee-strip{margin:6px 0 16px;}
+.project-content .marquee-viewport{margin:6px 0 16px;}
 
 /* ==========================================================
    REPOSITORIES
@@ -482,6 +519,9 @@ footer > .container > p{color:#93A0C2;}
   .info-card,.about-card,.repository-card,.skill-card{padding:22px;}
   .response-card{max-width:280px;}
   .footer-contact{flex-direction:column;gap:12px;}
+  .tab-btn{padding:10px 14px;font-size:.78rem;}
+  .marquee-viewport{height:96px;}
+  .marquee-viewport-sm{height:80px;}
 }
 
 @media (max-width:340px){

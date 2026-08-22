@@ -73,14 +73,27 @@ window.addEventListener("scroll", updateActiveSection);
 window.addEventListener("load", updateActiveSection);
 
 /* ==========================================================
-   REVEAL ON SCROLL
+   REVEAL ON SCROLL — staggered within each parent group
 ========================================================== */
 const revealItems = document.querySelectorAll("[data-reveal]");
+
+// group siblings so cards in the same row/grid stagger in sequence
+const revealGroups = new Map();
+revealItems.forEach(function (item) {
+  const parent = item.parentElement;
+  if (!revealGroups.has(parent)) revealGroups.set(parent, []);
+  const group = revealGroups.get(parent);
+  item.dataset.staggerIndex = group.length;
+  group.push(item);
+});
+
 if ("IntersectionObserver" in window) {
   const revealObserver = new IntersectionObserver(
     function (entries, observer) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
+          const delay = Math.min(parseInt(entry.target.dataset.staggerIndex || 0, 10), 6) * 90;
+          entry.target.style.transitionDelay = delay + "ms";
           entry.target.classList.add("is-visible");
           observer.unobserve(entry.target);
         }
@@ -99,7 +112,6 @@ if ("IntersectionObserver" in window) {
 if (skillsGrid) {
   const cards = Array.from(skillsGrid.children);
 
-  // build dots
   cards.forEach(function (_, i) {
     const dot = document.createElement("button");
     dot.setAttribute("aria-label", "Go to skill card " + (i + 1));
@@ -109,7 +121,7 @@ if (skillsGrid) {
   const dots = Array.from(skillsDots.children);
 
   function currentIndex() {
-    const cardWidth = cards[0].getBoundingClientRect().width + 20; // + gap
+    const cardWidth = cards[0].getBoundingClientRect().width + 20;
     return Math.round(skillsGrid.scrollLeft / cardWidth);
   }
 
@@ -145,6 +157,88 @@ if (skillsGrid) {
 }
 
 /* ==========================================================
+   HIGHLIGHTS — LifeChronicle / DevForge tab toggle
+   + animated count-up for the stat numbers
+========================================================== */
+const highlightTabs   = document.querySelector(".highlight-tabs");
+const highlightIndicator = document.querySelector(".tab-indicator");
+
+function animateCount(el) {
+  if (el.dataset.counted) return;
+  el.dataset.counted = "true";
+  const target = parseInt(el.getAttribute("data-count"), 10) || 0;
+  const suffix = el.getAttribute("data-suffix") || "";
+  const duration = 900;
+  const start = performance.now();
+
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target) + (progress === 1 ? suffix : "");
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function countUpPanel(panel) {
+  if (!panel) return;
+  panel.querySelectorAll("[data-count]").forEach(function (el) { animateCount(el); });
+}
+
+if (highlightTabs) {
+  const tabButtons = Array.from(highlightTabs.querySelectorAll(".tab-btn"));
+
+  function positionIndicator(btn) {
+    if (!highlightIndicator || !btn) return;
+    highlightIndicator.style.width = btn.offsetWidth + "px";
+    highlightIndicator.style.transform = "translateX(" + btn.offsetLeft + "px)";
+  }
+
+  function activateTab(target) {
+    tabButtons.forEach(function (btn) {
+      const isActive = btn.getAttribute("data-target") === target;
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute("aria-selected", isActive);
+      if (isActive) positionIndicator(btn);
+    });
+    document.querySelectorAll(".highlight-panel").forEach(function (panel) {
+      const isActive = panel.getAttribute("data-panel") === target;
+      panel.classList.toggle("active", isActive);
+      if (isActive) countUpPanel(panel);
+    });
+  }
+
+  tabButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () { activateTab(btn.getAttribute("data-target")); });
+  });
+
+  window.addEventListener("load", function () {
+    const activeBtn = highlightTabs.querySelector(".tab-btn.active") || tabButtons[0];
+    positionIndicator(activeBtn);
+  });
+  window.addEventListener("resize", function () {
+    const activeBtn = highlightTabs.querySelector(".tab-btn.active");
+    positionIndicator(activeBtn);
+  });
+}
+
+// count up the first (default-visible) panel once it scrolls into view
+if ("IntersectionObserver" in window) {
+  const firstPanel = document.querySelector(".highlight-panel.active");
+  if (firstPanel) {
+    const countObserver = new IntersectionObserver(function (entries, observer) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          countUpPanel(entry.target);
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    countObserver.observe(firstPanel);
+  }
+}
+
+/* ==========================================================
    IMAGE FALLBACK — generates an inline placeholder so a
    missing/renamed file never breaks the layout.
 ========================================================== */
@@ -164,6 +258,7 @@ function placeholderFor(label) {
    Convention: files are named 1.jpg / 1.jpeg / 1.png, then
    2, 3, 4 … with no gaps. Adding or removing numbered files
    in the folder needs no code change — this probes for them.
+   Handles any count (including 15+ per folder).
 ========================================================== */
 const IMG_EXTENSIONS = ["jpg", "jpeg", "png"];
 
@@ -184,7 +279,7 @@ async function resolveNumberedImage(basePath, index) {
   return null;
 }
 
-async function loadImageFolder(basePath, maxCount = 60) {
+async function loadImageFolder(basePath, maxCount = 200) {
   const urls = [];
   for (let i = 1; i <= maxCount; i++) {
     const url = await resolveNumberedImage(basePath, i);
@@ -194,7 +289,7 @@ async function loadImageFolder(basePath, maxCount = 60) {
   return urls;
 }
 
-/* ---- Personal gallery (About section) ---- */
+/* ---- Personal gallery (About section, if present) ---- */
 (async function initPersonalGallery() {
   const gallery = document.getElementById("personal-gallery");
   if (!gallery) return;
@@ -214,7 +309,9 @@ async function loadImageFolder(basePath, maxCount = 60) {
   });
 })();
 
-/* ---- Project cards: first image + marquee of the rest ---- */
+/* ---- Project cards: first image + ping-pong marquee of the rest ----
+   Marquee distance is measured in real pixels from the rendered track,
+   so it works correctly whether a folder has 3 images or 30+. ---- */
 async function initProjectMedia(card) {
   const folder = card.getAttribute("data-folder");
   const label = card.getAttribute("data-project") || "project";
@@ -229,29 +326,53 @@ async function initProjectMedia(card) {
     firstImgEl.onerror = function () { firstImgEl.src = placeholderFor(label); };
   }
 
-  if (track) {
-    const rest = urls.slice(1);
-    if (rest.length === 0) {
-      track.closest(".marquee-strip, .flagship-strip")?.classList.add("is-empty");
-      const wrap = track.parentElement;
-      if (wrap) wrap.style.display = "none";
+  if (!track) return;
+  const viewport = track.parentElement; // .marquee-viewport
+  const rest = urls.slice(1);
+
+  if (rest.length === 0) {
+    if (viewport) viewport.classList.add("is-empty");
+    return;
+  }
+
+  // duplicate the set so the ping-pong sweep always has content to show,
+  // no matter how few or how many images the folder holds
+  const sequence = rest.length < 6 ? rest.concat(rest) : rest;
+  sequence.forEach(function (url, i) {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = label + " screenshot " + ((i % rest.length) + 2);
+    img.loading = "lazy";
+    img.onerror = function () { img.src = placeholderFor(label + " " + (i + 1)); };
+    track.appendChild(img);
+  });
+
+  // measure real pixel widths once images have laid out, so the sweep
+  // always travels the exact distance needed — correct for any image count
+  function calibrate() {
+    if (!viewport) return;
+    const trackWidth = track.scrollWidth;
+    const viewportWidth = viewport.clientWidth;
+    const distance = Math.max(trackWidth - viewportWidth, 0);
+    if (distance <= 0) {
+      track.style.animation = "none";
       return;
     }
-    // duplicate the set once so the ping-pong sweep always has content
-    const sequence = rest.concat(rest);
-    sequence.forEach(function (url, i) {
-      const img = document.createElement("img");
-      img.src = url;
-      img.alt = label + " screenshot " + ((i % rest.length) + 2);
-      img.loading = "lazy";
-      img.onerror = function () { img.src = placeholderFor(label + " " + (i + 1)); };
-      track.appendChild(img);
-    });
-    // travel distance scales with content so longer strips still ping-pong nicely
-    const distance = Math.min(70, 20 + rest.length * 6);
-    track.style.setProperty("--marquee-distance", `-${distance}%`);
-    track.style.animationDuration = Math.max(10, rest.length * 3) + "s";
+    track.style.setProperty("--marquee-distance", `-${distance}px`);
+    // slower, steadier pace for longer strips so it never feels frantic
+    const duration = Math.min(60, Math.max(10, sequence.length * 2.2));
+    track.style.animationDuration = duration + "s";
   }
+
+  const allLoaded = Array.from(track.querySelectorAll("img")).map(function (img) {
+    return img.complete ? Promise.resolve() : new Promise(function (res) {
+      img.addEventListener("load", res, { once: true });
+      img.addEventListener("error", res, { once: true });
+    });
+  });
+  await Promise.all(allLoaded);
+  calibrate();
+  window.addEventListener("resize", calibrate);
 }
 
 document.querySelectorAll("[data-folder]").forEach(function (card) {

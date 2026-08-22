@@ -59,6 +59,7 @@
         <span class="chip">Django Developer</span>
         <span class="chip">REST API Developer</span>
         <span class="chip">AI / LLM Integration</span>
+        <span class="chip">Postgresql Developer</span>
       </div>
 
       <p class="lede">
@@ -243,21 +244,44 @@
   <div class="container">
     <div class="section-title" data-reveal>
       <span class="eyebrow">/highlights</span>
-      <h2>Inside LifeChronicle</h2>
-      <p>My flagship project, by the numbers — an enterprise digital life management platform.</p>
+      <h2>Flagship projects, by the numbers</h2>
+      <p>My two largest engineering efforts — an in-progress life-management platform and a completed productivity suite.</p>
     </div>
 
-    <div class="highlight-grid">
-      <div class="highlight-card" data-reveal><h3>19</h3><p>Specification Documents</p></div>
-      <div class="highlight-card" data-reveal><h3>9</h3><p>Modular Django Apps</p></div>
-      <div class="highlight-card" data-reveal><h3>30+</h3><p>Relational DB Models</p></div>
-      <div class="highlight-card" data-reveal><h3>30+</h3><p>REST API Endpoints</p></div>
-      <div class="highlight-card" data-reveal><h3>7</h3><p>Languages Supported</p></div>
-      <div class="highlight-card" data-reveal><h3>5</h3><p>Production-Style Projects Shipped</p></div>
+    <div class="highlight-tabs" role="tablist" data-reveal>
+      <button class="tab-btn active" data-target="lc" role="tab" aria-selected="true">
+        <i class="fa-solid fa-hourglass-half"></i> LifeChronicle
+      </button>
+      <button class="tab-btn" data-target="df" role="tab" aria-selected="false">
+        <i class="fa-solid fa-check"></i> DevForge
+      </button>
+      <span class="tab-indicator" aria-hidden="true"></span>
+    </div>
+
+    <div class="highlight-panel active" data-panel="lc" role="tabpanel">
+      <div class="highlight-grid">
+        <div class="highlight-card" data-reveal><h3 data-count="19">0</h3><p>Specification Documents</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="9">0</h3><p>Modular Django Apps</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="30" data-suffix="+">0</h3><p>Relational DB Models</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="30" data-suffix="+">0</h3><p>REST API Endpoints</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="7">0</h3><p>Languages Supported</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="5" data-suffix="+">0</h3><p>Seed Data Table For Support</p></div>
+      </div>
+    </div>
+
+    <div class="highlight-panel" data-panel="df" role="tabpanel">
+      <div class="highlight-grid">
+        <div class="highlight-card" data-reveal><h3 data-count="6">0</h3><p>Django Applications</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="5">0</h3><p>Core Relational Models</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="10" data-suffix="+">0</h3><p>Django Views</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="3">0</h3><p>DRF API Endpoints</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="1">0</h3><p>AI Providers Integrated</p></div>
+        <div class="highlight-card" data-reveal><h3 data-count="3" data-suffix="+">0</h3><p>Third Party API</p></div>
+      </div>
     </div>
 
     <div class="highlight-cta" data-reveal>
-      <a href="#projects" class="btn btn-solid"><i class="fa-solid fa-diagram-project"></i> Explore LifeChronicle</a>
+      <a href="#projects" class="btn btn-solid"><i class="fa-solid fa-diagram-project"></i> Explore Both Projects</a>
     </div>
   </div>
 </section>
@@ -271,7 +295,7 @@
       <p>Practical projects spanning system design, backend engineering and frontend delivery.</p>
     </div>
 
-    <!-- Flagship: LifeChronicle -->
+    <!-- Flagship 1: LifeChronicle -->
     <article class="project-flagship" data-reveal data-project="lifechronicle" data-folder="images/Projects/lifechronicle">
       <div class="flagship-top">
         <img class="flagship-hero-img" data-first-image alt="LifeChronicle">
@@ -294,7 +318,40 @@
         </div>
       </div>
       <div class="flagship-strip">
-        <div class="marquee-track" data-marquee></div>
+        <div class="marquee-viewport">
+          <div class="marquee-track" data-marquee></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Flagship 2: DevForge -->
+    <article class="project-flagship" data-reveal data-project="devforge" data-folder="images/Projects/devforge">
+      <div class="flagship-top">
+        <img class="flagship-hero-img" data-first-image alt="DevForge">
+        <span class="status-badge status-complete"><i class="fa-solid fa-check"></i> Completed</span>
+      </div>
+      <div class="flagship-body">
+        <span class="eyebrow eyebrow-accent">/projects/devforge</span>
+        <h3>DevForge <small>— Full-Stack Development &amp; Productivity Platform</small></h3>
+        <p>A full-stack personal development and productivity platform built with a modular Django
+          architecture across 6 apps — Accounts, Emails, Location, AI, Files and Reports. Integrates
+          Google OAuth 2.0 with Gmail sending, OpenAI &amp; Gemini-assisted email and location workflows,
+          interactive Leaflet maps, centralized file management, and paginated reporting — deployed live
+          on Render.</p>
+        <div class="project-tags">
+          <span>Python</span><span>Django</span><span>DRF</span><span>PostgreSQL</span>
+          <span>Google OAuth 2.0</span><span>Gmail API</span><span>OpenAI</span><span>Gemini</span>
+          <span>Leaflet</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/keshav-codex/DevForge" target="_blank"><i class="fab fa-github"></i> Source Code</a>
+          <a href="https://devforge-xxd1.onrender.com/" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Live Demo</a>
+        </div>
+      </div>
+      <div class="flagship-strip">
+        <div class="marquee-viewport">
+          <div class="marquee-track" data-marquee></div>
+        </div>
       </div>
     </article>
 
@@ -311,7 +368,7 @@
           <div class="project-tags">
             <span>Python</span><span>Django</span><span>PostgreSQL</span><span>ORM</span><span>Bootstrap</span>
           </div>
-          <div class="marquee-strip"><div class="marquee-track" data-marquee></div></div>
+          <div class="marquee-viewport marquee-viewport-sm"><div class="marquee-track" data-marquee></div></div>
           <div class="project-links">
             <a href="https://github.com/keshav-codex/Staff_Management_System" target="_blank"><i class="fab fa-github"></i> Source</a>
             <a href="https://staff-management-system-prfu.onrender.com/" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Live Demo</a>
@@ -329,7 +386,7 @@
           <div class="project-tags">
             <span>Python</span><span>Django</span><span>PostgreSQL</span><span>Django Forms</span>
           </div>
-          <div class="marquee-strip"><div class="marquee-track" data-marquee></div></div>
+          <div class="marquee-viewport marquee-viewport-sm"><div class="marquee-track" data-marquee></div></div>
           <div class="project-links">
             <a href="https://github.com/keshav-codex/Exam_Center_Project" target="_blank"><i class="fab fa-github"></i> Source</a>
             <a href="https://exam-center-project.onrender.com/" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Live Demo</a>
@@ -347,7 +404,7 @@
           <div class="project-tags">
             <span>HTML5</span><span>CSS3</span><span>Bootstrap</span><span>JavaScript</span><span>JSON</span>
           </div>
-          <div class="marquee-strip"><div class="marquee-track" data-marquee></div></div>
+          <div class="marquee-viewport marquee-viewport-sm"><div class="marquee-track" data-marquee></div></div>
           <div class="project-links">
             <a href="https://github.com/keshav-codex/projects/tree/main/Registration-Login-System" target="_blank"><i class="fab fa-github"></i> Source</a>
             <a href="https://registration-login-system.netlify.app/" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Live Demo</a>
@@ -365,7 +422,7 @@
           <div class="project-tags">
             <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>GitHub Pages</span>
           </div>
-          <div class="marquee-strip"><div class="marquee-track" data-marquee></div></div>
+          <div class="marquee-viewport marquee-viewport-sm"><div class="marquee-track" data-marquee></div></div>
           <div class="project-links">
             <a href="https://github.com/keshav-codex/Portfolio" target="_blank"><i class="fab fa-github"></i> Source</a>
             <a href="https://keshav-codex.github.io/Portfolio/" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Live Portfolio</a>
